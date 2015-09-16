@@ -3369,7 +3369,7 @@ public abstract class TreeBuilder<T> implements TokenHandler,
         }
     }
 
-    public final void endTag(ElementName elementName) throws SAXException {
+    public void endTag(ElementName elementName) throws SAXException {
         flushCharacters();
         needToDropLF = false;
         int eltPos;
