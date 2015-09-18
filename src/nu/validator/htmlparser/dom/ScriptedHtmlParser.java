@@ -52,8 +52,6 @@ public class ScriptedHtmlParser {
 
 	private boolean suspendRequested;
 
-	private boolean ended;
-
 	private boolean noscript;
 
 
@@ -179,11 +177,10 @@ public class ScriptedHtmlParser {
 		domTreeBuilder.setScriptingEnabled(!noscript);
 
 		String ctx = null;
-
-		// TODO: this could be a fragment...???
 		if (context != null && context instanceof Element) {
-			ctx = ((Element) context).getTagName().toLowerCase();
-			domTreeBuilder.setFragmentContext(ctx, context.getNamespaceURI(), (Element) context, false);
+		    // this is always lowercased
+			ctx = ((Element) context).getTagName().intern();
+			domTreeBuilder.setFragmentContext(ctx, "http://www.w3.org/1999/xhtml", (Element) context, false);
 		} else {
 			domTreeBuilder.setFragmentContext(null);
 		}
@@ -227,7 +224,6 @@ public class ScriptedHtmlParser {
 		if (currentBuffer == null) {
 			tokenizer.eof();
 			tokenizer.end();
-			ended = true;
 			return;
 		}
 
