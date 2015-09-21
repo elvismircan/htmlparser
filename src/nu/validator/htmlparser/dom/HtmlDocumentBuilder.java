@@ -165,7 +165,7 @@ public class HtmlDocumentBuilder extends DocumentBuilder {
     public HtmlDocumentBuilder(DOMImplementation implementation,
             XmlViolationPolicy xmlPolicy) {
         this.implementation = implementation;
-        this.treeBuilder = new DOMTreeBuilder(implementation);
+        this.treeBuilder = new DOMTreeBuilder(implementation, null);
         this.driver = null;
         setXmlPolicy(xmlPolicy);
     }

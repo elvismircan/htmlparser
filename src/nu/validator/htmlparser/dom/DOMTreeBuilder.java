@@ -60,9 +60,10 @@ class DOMTreeBuilder extends CoalescingTreeBuilder<Element> {
      * @param implementation
      *            the DOM impl.
      */
-    protected DOMTreeBuilder(DOMImplementation implementation) {
+    protected DOMTreeBuilder(DOMImplementation implementation, Document document) {
         super();
         this.implementation = implementation;
+        this.document = document;
     }
 
     /**
@@ -242,7 +243,9 @@ class DOMTreeBuilder extends CoalescingTreeBuilder<Element> {
      * @see nu.validator.htmlparser.impl.TreeBuilder#start()
      */
     @Override protected void start(boolean fragment) throws SAXException {
-        document = implementation.createDocument(null, null, null);
+        if ( document == null ) {
+            document = implementation.createDocument(null, null, null);
+        }
     }
 
     /**
