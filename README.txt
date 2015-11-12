@@ -1,4 +1,4 @@
-NOTE: You *MUST* run the `tokenizer-hotspot-workaround` mvn goal before packaging the jar to workaround the need to run java with `-XX:-DontCompileHugeMethods`
+NOTE: The `tokenizer-hotspot-workaround` is now part of the mvn lifecycle step `process-sources`
 
 ------
 
