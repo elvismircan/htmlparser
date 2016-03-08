@@ -234,7 +234,12 @@ public class ScriptedHtmlParser {
     }
 
     public void pump() throws SAXException {
-
+    	while ( ! Thread.currentThread().isInterrupted() && doPump() ) {
+    		// continue
+    	}
+    }
+    		
+    private boolean doPump() throws SAXException {
         suspendRequested = false;
         
         if (writeBuffer.length() > 0) {
@@ -248,19 +253,19 @@ public class ScriptedHtmlParser {
         if (currentBuffer == null) {
             tokenizer.eof();
             tokenizer.end();
-            return;
+            return false;
         }
 
-        if (currentBuffer.hasMore()) {
+        while (currentBuffer.hasMore()) {
             tokenizer.tokenizeBuffer(currentBuffer);
             if ( suspendRequested ) { // onResume is set if we have requested a suspension
-                return;
+                return false;
             }
-        } else {
-            bufferStack.pop();
         }
-
-        pump();
+        
+        bufferStack.pop();
+    
+        return true;
     }
 
     public void injectWriteBuffer() {
