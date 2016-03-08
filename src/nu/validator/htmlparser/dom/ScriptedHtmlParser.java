@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
+import java.util.concurrent.TimeoutException;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -234,12 +235,19 @@ public class ScriptedHtmlParser {
     }
 
     public void pump() throws SAXException {
+    	
+    	// This is guarding against infinite loops of JS doing document.write()
+    	long maxTime = 2000;
+    	long start = System.currentTimeMillis();
     	while ( ! Thread.currentThread().isInterrupted() && doPump() ) {
-    		// continue
+    		if ( System.currentTimeMillis() - start > maxTime ) {
+    			throw new RuntimeException("pump() took too long to process");
+    		}
     	}
     }
-    		
-    private boolean doPump() throws SAXException {
+    
+    public boolean doPump() throws SAXException {
+
         suspendRequested = false;
         
         if (writeBuffer.length() > 0) {
@@ -256,15 +264,18 @@ public class ScriptedHtmlParser {
             return false;
         }
 
-        while (currentBuffer.hasMore()) {
+        if (currentBuffer.hasMore()) {
             tokenizer.tokenizeBuffer(currentBuffer);
             if ( suspendRequested ) { // onResume is set if we have requested a suspension
                 return false;
             }
         }
         
-        bufferStack.pop();
-    
+        if (! currentBuffer.hasMore() ) {
+        	bufferStack.pop();
+        }
+        
+        
         return true;
     }
 
